@@ -1,4 +1,5 @@
 interface Window {
+  contract?: any
   ethereum: Ethereumish
 }
 

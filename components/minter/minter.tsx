@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Code,
@@ -7,6 +9,7 @@ import {
   FormLabel,
   Heading,
   Input,
+  Link,
   Text,
   useToast,
   VStack,
@@ -14,6 +17,7 @@ import {
 import { FormEvent, useCallback, useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { getCurrentConnectedWallet, getPublicAddress, MetaMaskNotAvailableError } from "utils/ethereum"
+import { useMintNftMutation } from "utils/mint-nft"
 
 const WALLET_ADDRESS_QUERY_KEY = "walletAddress"
 
@@ -40,6 +44,7 @@ const Minter = () => {
       queryClient.setQueryData([WALLET_ADDRESS_QUERY_KEY], address)
     },
   })
+  const mintNftMutation = useMintNftMutation()
 
   // Error handlers
   useEffect(() => {
@@ -66,6 +71,15 @@ const Minter = () => {
       })
     }
   }, [requestWalletAddressMutation.error, toast])
+  useEffect(() => {
+    if (mintNftMutation.error) {
+      toast({
+        title: `Something went wrong while minting your NFT :(`,
+        isClosable: true,
+        status: "error",
+      })
+    }
+  }, [mintNftMutation.error, toast])
 
   /** Registers event listener for `accountsChanged` (when user changes account in MetMask, or disconnects account) */
   useEffect(() => {
@@ -92,9 +106,15 @@ const Minter = () => {
     requestWalletAddressMutation.mutate()
   }, [requestWalletAddressMutation])
 
-  const handleSubmitForm = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-  }, [])
+  const handleSubmitForm = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      if (!mintNftMutation.isLoading) {
+        mintNftMutation.mutate({ name, description, image: assetUrl })
+      }
+    },
+    [assetUrl, description, mintNftMutation, name]
+  )
 
   return (
     <Container maxW="container.lg" py={6}>
@@ -103,6 +123,9 @@ const Minter = () => {
       </Heading>
 
       <Box pt={6}>
+        <Heading size="md" as="h2">
+          {"Make sure you're on the Ropsten test network!"}
+        </Heading>
         {getWalletAddressQuery.data ? (
           <Heading size="sm" title={getWalletAddressQuery.data}>
             {"Connected: "}
@@ -159,10 +182,28 @@ const Minter = () => {
               />
             </FormControl>
           </VStack>
-          <Button colorScheme="blue" type="submit" disabled={!getWalletAddressQuery.data}>
+          <Button
+            colorScheme="blue"
+            type="submit"
+            disabled={!getWalletAddressQuery.data}
+            isLoading={mintNftMutation.isLoading}
+          >
             Mint NFT
           </Button>
         </form>
+        {mintNftMutation.data && (
+          <Alert status="success" variant="solid" maxW="100%">
+            <AlertIcon />
+            <Box maxW="100%" overflowX="auto">
+              {"✅ Check out your transaction on Etherscan: "}
+              <Link
+                href={`https://ropsten.etherscan.io/tx/${mintNftMutation.data}`}
+                target="_blank"
+                rel="noreferrer"
+              >{`https://ropsten.etherscan.io/tx/${mintNftMutation.data}`}</Link>
+            </Box>
+          </Alert>
+        )}
       </Box>
     </Container>
   )
