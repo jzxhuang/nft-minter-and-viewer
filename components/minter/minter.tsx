@@ -15,11 +15,16 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { FormEvent, useCallback, useEffect, useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "react-query"
-import { getCurrentConnectedWallet, getPublicAddress, MetaMaskNotAvailableError } from "utils/ethereum"
-import { useMintNftMutation } from "utils/mint-nft"
-
-const WALLET_ADDRESS_QUERY_KEY = "walletAddress"
+import { MetaMaskNotAvailableError } from "utils/ethereum"
+import { useMintNftMutation } from "queries/nfts/query-hooks"
+import {
+  useGetWalletAddressQuery,
+  useRequestWalletMutation,
+  WALLET_ADDRESS_QUERY_KEY,
+} from "queries/ethereum/query-hooks"
+import { useQueryClient } from "react-query"
+import { ViewMyNfts } from "components/view-nfts/my-nfts"
+import { AllNfts } from "components/view-nfts/all-nfts"
 
 const Minter = () => {
   const queryClient = useQueryClient()
@@ -31,19 +36,10 @@ const Minter = () => {
   const [assetUrl, setAssetUrl] = useState("")
 
   /** Fetch the wallet address on mount */
-  const getWalletAddressQuery = useQuery([WALLET_ADDRESS_QUERY_KEY], getCurrentConnectedWallet, {
-    retry: false,
-    staleTime: Infinity,
-  })
+  const getWalletAddressQuery = useGetWalletAddressQuery()
 
   /** Mutation for requesting wallet address from MetaMask */
-  const requestWalletAddressMutation = useMutation(getPublicAddress, {
-    retry: false,
-    onSuccess: (address) => {
-      /** After mutating, set the query data for the wallet address query key */
-      queryClient.setQueryData([WALLET_ADDRESS_QUERY_KEY], address)
-    },
-  })
+  const requestWalletAddressMutation = useRequestWalletMutation()
   const mintNftMutation = useMintNftMutation()
 
   // Error handlers
@@ -85,7 +81,7 @@ const Minter = () => {
   useEffect(() => {
     function handleAccountsChanged(accounts: string[]) {
       console.log(
-        "XXX accountsChanged, previous data, newData:",
+        "accountsChanged, previous data, newData:",
         accounts,
         queryClient.getQueryData([WALLET_ADDRESS_QUERY_KEY]),
         accounts[0]?.toLowerCase()
@@ -117,22 +113,25 @@ const Minter = () => {
   )
 
   return (
-    <Container maxW="container.lg" py={6}>
+    <Container maxW="container.xl" py={6}>
       <Heading as="h1" size="2xl">
-        🧙‍♂️ My NFT Minter
+        🧙‍♂️ Simple NFT Minter and Viewer
       </Heading>
 
       <Box pt={6}>
-        <Heading size="md" as="h2">
+        <Heading size="md" as="h2" pb={2}>
           {"Make sure you're on the Ropsten test network!"}
         </Heading>
         {getWalletAddressQuery.data ? (
-          <Heading size="sm" title={getWalletAddressQuery.data}>
-            {"Connected: "}
-            <Code>{`${String(getWalletAddressQuery.data).substring(0, 6)}...${String(
-              getWalletAddressQuery.data
-            ).substring(38)}`}</Code>
-          </Heading>
+          <Alert status="success">
+            <AlertIcon />
+            <Heading size="sm" title={getWalletAddressQuery.data}>
+              {"Connected wallet: "}
+              <Code>{`${String(getWalletAddressQuery.data).substring(0, 6)}...${String(
+                getWalletAddressQuery.data
+              ).substring(38)}`}</Code>
+            </Heading>
+          </Alert>
         ) : (
           <Button
             disabled={getWalletAddressQuery.isLoading || requestWalletAddressMutation.isLoading}
@@ -192,7 +191,7 @@ const Minter = () => {
           </Button>
         </form>
         {mintNftMutation.data && (
-          <Alert status="success" variant="solid" maxW="100%">
+          <Alert status="success" variant="solid" maxW="100%" mt={4}>
             <AlertIcon />
             <Box maxW="100%" overflowX="auto">
               {"✅ Check out your transaction on Etherscan: "}
@@ -205,6 +204,10 @@ const Minter = () => {
           </Alert>
         )}
       </Box>
+
+      {getWalletAddressQuery.data && <ViewMyNfts walletAddress={getWalletAddressQuery.data} />}
+
+      <AllNfts />
     </Container>
   )
 }

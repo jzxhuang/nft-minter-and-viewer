@@ -1,5 +1,4 @@
-import { alchemyWeb3Client } from "clients/alchemy-web-3"
-import contractAbi from "contracts/MyNFT.json"
+import { nftContract } from "clients/alchemy-web-3"
 import { pinJson } from "queries/ipfs"
 import { PinJsonToIpfsRequest } from "queries/pinata"
 import { useMutation } from "react-query"
@@ -7,15 +6,17 @@ import { useMutation } from "react-query"
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "0x4C4a07F737Bf57F6632B6CAB089B78f62385aCaE" // alchemy's demo contract
 
 /**
- * Mints an NFT by calling the `mintNFT` method of our contract
- * and asking the user to sign the MetaMask transaction
+ * Mints an NFT
+ *
+ * - creates the metadata on IPFS through pinata
+ * - creates the transaction, calling the `mintNft` method of our contract and asking the user to sign the transaction
  */
-export const mintNFT = async (jsonMetadata: PinJsonToIpfsRequest) => {
+export const mintNft = async (jsonMetadata: PinJsonToIpfsRequest) => {
   const pinataResponse = await pinJson(jsonMetadata)
 
   //load smart contract
   // @ts-ignore
-  window.contract = new alchemyWeb3Client.eth.Contract(contractAbi, contractAddress) //loadContract();
+  window.contract = nftContract
 
   //set up your Ethereum transaction
   const transactionParameters = {
@@ -36,5 +37,3 @@ export const mintNFT = async (jsonMetadata: PinJsonToIpfsRequest) => {
     throw err
   }
 }
-
-export const useMintNftMutation = () => useMutation(mintNFT, { retry: false })
