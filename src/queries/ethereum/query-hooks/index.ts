@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { getAllNftsForContract, getCurrentConnectedWallet, getNftsForWallet, getPublicAddress } from "utils/ethereum"
+
+import { getAllNftsForContract, getCurrentConnectedWallet, getNftsForWallet, getPublicAddress } from "@/utils/ethereum"
 
 export const WALLET_ADDRESS_QUERY_KEY = "walletAddress"
 

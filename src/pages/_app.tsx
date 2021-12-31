@@ -1,8 +1,8 @@
 import { Center, ChakraProvider, Icon, Link } from "@chakra-ui/react"
 import type { AppProps } from "next/app"
+import { FaGithub } from "react-icons/fa"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
-import { FaGithub } from "react-icons/fa"
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false, staleTime: 20000 } } })
 

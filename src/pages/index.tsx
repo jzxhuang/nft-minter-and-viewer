@@ -1,19 +1,19 @@
+import { Alert, AlertIcon, Box, Button, Code, Container, Heading, Link, Text, useToast } from "@chakra-ui/react"
 import type { NextPage } from "next"
 import Head from "next/head"
+import { useCallback, useEffect } from "react"
+import { useQueryClient } from "react-query"
 
-import Minter from "components/minter/minter"
-import { useToast, Container, Heading, Box, Alert, AlertIcon, Code, Button, Text, Link } from "@chakra-ui/react"
+import Minter from "@/components/minter/minter"
+import { AllNfts } from "@/components/view-nfts/all-nfts"
+import { ViewMyNfts } from "@/components/view-nfts/my-nfts"
 import {
+  WALLET_ADDRESS_QUERY_KEY,
   useGetWalletAddressQuery,
   useRequestWalletMutation,
-  WALLET_ADDRESS_QUERY_KEY,
-} from "queries/ethereum/query-hooks"
-import { useMintNftMutation } from "queries/nfts/query-hooks"
-import { useEffect, useCallback } from "react"
-import { useQueryClient } from "react-query"
-import { MetaMaskNotAvailableError } from "utils/ethereum"
-import { AllNfts } from "components/view-nfts/all-nfts"
-import { ViewMyNfts } from "components/view-nfts/my-nfts"
+} from "@/queries/ethereum/query-hooks"
+import { useMintNftMutation } from "@/queries/nfts/query-hooks"
+import { MetaMaskNotAvailableError } from "@/utils/ethereum"
 
 const Home: NextPage = () => {
   const queryClient = useQueryClient()

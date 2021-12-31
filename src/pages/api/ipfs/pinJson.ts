@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { PinJsonToIpfsRequest, PinJsonToIpfsResponse, pinJsonToIpfs } from "queries/pinata"
+
+import { PinJsonToIpfsRequest, PinJsonToIpfsResponse, pinJsonToIpfs } from "@/queries/pinata"
 
 const pinataApiKey = process.env.PINATA_API_KEY
 const pinataApiSecret = process.env.PINATA_API_SECRET

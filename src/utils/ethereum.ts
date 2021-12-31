@@ -1,4 +1,4 @@
-import { nftContract } from "clients/alchemy-web-3"
+import { nftContract } from "@/clients/alchemy-web-3"
 
 /** MetaMask is not installed */
 export class MetaMaskNotAvailableError extends Error {}

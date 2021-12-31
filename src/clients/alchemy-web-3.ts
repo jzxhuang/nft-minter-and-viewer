@@ -1,5 +1,6 @@
-import contractAbi from "contracts/MyNFT.json"
 import { createAlchemyWeb3 } from "@alch/alchemy-web3"
+
+import contractAbi from "@/contracts/MyNFT.json"
 
 const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY
 const alchemyUrl = process.env.NEXT_PUBLIC_ALCHEMY_URL

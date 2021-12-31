@@ -1,6 +1,7 @@
-import { Box, Skeleton, VStack, Flex, Heading, Divider, Text, Image } from "@chakra-ui/react"
-import { useGetNftMetadataQuery } from "queries/nfts/query-hooks"
-import { NftData } from "utils/ethereum"
+import { Box, Divider, Flex, Heading, Image, Skeleton, Text, VStack } from "@chakra-ui/react"
+
+import { useGetNftMetadataQuery } from "@/queries/nfts/query-hooks"
+import { NftData } from "@/utils/ethereum"
 
 /** A single NFT, rendered as a card */
 export const NftItem = (props: { nftData: NftData; showAddress?: boolean }) => {

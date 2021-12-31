@@ -1,6 +1,8 @@
-import { Alert, AlertIcon, Box, Flex, Grid, GridItem, Heading, Spinner } from "@chakra-ui/react"
-import { NftItem } from "components/view-nfts/nft-item"
-import { useGetAllNftsForContractQuery } from "queries/ethereum/query-hooks"
+import { Alert, AlertIcon, Box, Flex, GridItem, Heading, Spinner } from "@chakra-ui/react"
+
+import { NftItem } from "@/components/view-nfts/nft-item"
+import { useGetAllNftsForContractQuery } from "@/queries/ethereum/query-hooks"
+
 import { NftGrid } from "./nft-grid"
 
 export const AllNfts = () => {

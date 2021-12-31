@@ -1,6 +1,7 @@
-import { getNftMetadata } from "queries/nfts/get-metadata"
-import { mintNft } from "queries/nfts/mint-nft"
 import { useMutation, useQuery } from "react-query"
+
+import { getNftMetadata } from "@/queries/nfts/get-metadata"
+import { mintNft } from "@/queries/nfts/mint-nft"
 
 const GET_NFT_METADATA_QUERY_KEY = "getNftMetadata"
 export const useGetNftMetadataQuery = (uri: string) =>

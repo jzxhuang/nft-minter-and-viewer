@@ -1,7 +1,8 @@
-import { Alert, AlertIcon, Box, Button, FormControl, FormLabel, Input, Link, useToast, VStack } from "@chakra-ui/react"
+import { Alert, AlertIcon, Box, Button, FormControl, FormLabel, Input, Link, VStack, useToast } from "@chakra-ui/react"
 import { FormEvent, useCallback, useEffect, useState } from "react"
-import { useMintNftMutation } from "queries/nfts/query-hooks"
-import { useGetWalletAddressQuery } from "queries/ethereum/query-hooks"
+
+import { useGetWalletAddressQuery } from "@/queries/ethereum/query-hooks"
+import { useMintNftMutation } from "@/queries/nfts/query-hooks"
 
 const Minter = () => {
   const toast = useToast()

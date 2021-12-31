@@ -1,7 +1,8 @@
-import { nftContract } from "clients/alchemy-web-3"
-import { pinJson } from "queries/ipfs"
-import { PinJsonToIpfsRequest } from "queries/pinata"
 import { useMutation } from "react-query"
+
+import { nftContract } from "@/clients/alchemy-web-3"
+import { pinJson } from "@/queries/ipfs"
+import { PinJsonToIpfsRequest } from "@/queries/pinata"
 
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "0x4C4a07F737Bf57F6632B6CAB089B78f62385aCaE" // alchemy's demo contract
 
