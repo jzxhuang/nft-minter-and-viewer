@@ -2,8 +2,90 @@ import type { NextPage } from "next"
 import Head from "next/head"
 
 import Minter from "components/minter/minter"
+import { useToast, Container, Heading, Box, Alert, AlertIcon, Code, Button, Text } from "@chakra-ui/react"
+import {
+  useGetWalletAddressQuery,
+  useRequestWalletMutation,
+  WALLET_ADDRESS_QUERY_KEY,
+} from "queries/ethereum/query-hooks"
+import { useMintNftMutation } from "queries/nfts/query-hooks"
+import { useEffect, useCallback } from "react"
+import { useQueryClient } from "react-query"
+import { MetaMaskNotAvailableError } from "utils/ethereum"
+import { AllNfts } from "components/view-nfts/all-nfts"
+import { ViewMyNfts } from "components/view-nfts/my-nfts"
 
 const Home: NextPage = () => {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
+  /** Fetch the wallet address on mount */
+  const getWalletAddressQuery = useGetWalletAddressQuery()
+
+  /** Mutation for requesting wallet address from MetaMask */
+  const requestWalletAddressMutation = useRequestWalletMutation()
+  const mintNftMutation = useMintNftMutation()
+
+  // Error handlers
+  useEffect(() => {
+    if (getWalletAddressQuery.error) {
+      toast({
+        title:
+          getWalletAddressQuery.error instanceof MetaMaskNotAvailableError
+            ? "Please install MetaMask"
+            : `An error has occurred`,
+        status: "error",
+        isClosable: true,
+      })
+    }
+  }, [getWalletAddressQuery.error, toast])
+  useEffect(() => {
+    if (requestWalletAddressMutation.error) {
+      toast({
+        title:
+          requestWalletAddressMutation.error instanceof MetaMaskNotAvailableError
+            ? "Please install MetaMask"
+            : `An error has occurred while connecting your wallet`,
+        status: "error",
+        isClosable: true,
+      })
+    }
+  }, [requestWalletAddressMutation.error, toast])
+  useEffect(() => {
+    if (mintNftMutation.error) {
+      toast({
+        title: `Something went wrong while minting your NFT :(`,
+        isClosable: true,
+        status: "error",
+      })
+    }
+  }, [mintNftMutation.error, toast])
+
+  /** Registers event listener for `accountsChanged` (when user changes account in MetMask, or disconnects account) */
+  useEffect(() => {
+    function handleAccountsChanged(accounts: string[]) {
+      console.log(
+        "accountsChanged, previous data, newData:",
+        accounts,
+        queryClient.getQueryData([WALLET_ADDRESS_QUERY_KEY]),
+        accounts[0]?.toLowerCase()
+      )
+      queryClient.setQueryData([WALLET_ADDRESS_QUERY_KEY], accounts[0]?.toLowerCase())
+    }
+
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", handleAccountsChanged)
+
+      return () => {
+        window.ethereum.removeListener("accountsChanged", handleAccountsChanged)
+      }
+    }
+  }, [queryClient])
+
+  const handleConnectWallet = useCallback(() => {
+    requestWalletAddressMutation.mutate()
+  }, [requestWalletAddressMutation])
+
   return (
     <>
       <Head>
@@ -12,7 +94,43 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Minter />
+      <Container maxW="container.xl" py={6}>
+        <Heading as="h1" size="2xl">
+          🧙‍♂️ Simple NFT Minter and Viewer
+        </Heading>
+
+        <Box pt={6}>
+          <Heading size="md" as="h2" pb={2}>
+            {"Make sure you're on the Ropsten test network!"}
+          </Heading>
+          {getWalletAddressQuery.data ? (
+            <Alert status="success">
+              <AlertIcon />
+              <Heading size="sm" title={getWalletAddressQuery.data}>
+                {"Connected wallet: "}
+                <Code>{`${String(getWalletAddressQuery.data).substring(0, 6)}...${String(
+                  getWalletAddressQuery.data
+                ).substring(38)}`}</Code>
+              </Heading>
+            </Alert>
+          ) : (
+            <Button
+              disabled={getWalletAddressQuery.isLoading || requestWalletAddressMutation.isLoading}
+              isLoading={getWalletAddressQuery.isLoading || requestWalletAddressMutation.isLoading}
+              variant="outline"
+              colorScheme="cyan"
+              onClick={handleConnectWallet}
+            >
+              Connect Wallet
+            </Button>
+          )}
+          <Text pt={4}>{`Simply add your asset's link, name, and description, then press "Mint."`}</Text>
+
+          <Minter />
+          {getWalletAddressQuery.data && <ViewMyNfts walletAddress={getWalletAddressQuery.data} />}
+          <AllNfts />
+        </Box>
+      </Container>
     </>
   )
 }

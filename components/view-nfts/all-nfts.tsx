@@ -8,7 +8,7 @@ export const AllNfts = () => {
   return (
     <Box py={6}>
       <Heading size="lg" pb={3}>
-        All minted NFTs
+        All NFTs
       </Heading>
 
       {data ? (

@@ -2,6 +2,7 @@ import { Box, Skeleton, VStack, Flex, Heading, Divider, Text, Image } from "@cha
 import { useGetNftMetadataQuery } from "queries/nfts/query-hooks"
 import { NftData } from "utils/ethereum"
 
+/** A single NFT, rendered as a card */
 export const NftItem = (props: { nftData: NftData; showAddress?: boolean }) => {
   const { nftData, showAddress } = props
 
