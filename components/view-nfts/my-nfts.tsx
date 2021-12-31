@@ -1,6 +1,7 @@
 import { Alert, AlertIcon, Box, Flex, Grid, GridItem, Heading, Spinner } from "@chakra-ui/react"
 import { NftItem } from "components/view-nfts/nft-item"
 import { useGetNftsForWalletQuery } from "queries/ethereum/query-hooks"
+import { NftGrid } from "./nft-grid"
 
 interface ViewMyNftsProps {
   walletAddress: string
@@ -19,13 +20,13 @@ export const ViewMyNfts = (props: ViewMyNftsProps) => {
 
       {data ? (
         data.length > 0 ? (
-          <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+          <NftGrid>
             {data.map((nft) => (
               <GridItem key={nft.tokenId}>
                 <NftItem nftData={nft} />
               </GridItem>
             ))}
-          </Grid>
+          </NftGrid>
         ) : (
           <Alert status="info">
             <AlertIcon />

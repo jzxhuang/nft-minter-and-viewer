@@ -19,7 +19,9 @@ export const NftItem = (props: { nftData: NftData; showAddress?: boolean }) => {
                 <Heading size="sm">{`#${nftData.tokenId}`}</Heading>
               </Flex>
               <Text color="gray.500">{data.description}</Text>
-              {showAddress && <Text fontSize="xs" color="gray.500">{`Owner: ${nftData.owner}`}</Text>}
+              {showAddress && (
+                <Text fontSize="xs" color="gray.500" maxW="100%" isTruncated>{`Owner: ${nftData.owner}`}</Text>
+              )}
               <Divider mt={1} orientation="horizontal" />
             </VStack>
 

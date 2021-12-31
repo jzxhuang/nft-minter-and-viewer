@@ -2,7 +2,7 @@ import type { NextPage } from "next"
 import Head from "next/head"
 
 import Minter from "components/minter/minter"
-import { useToast, Container, Heading, Box, Alert, AlertIcon, Code, Button, Text } from "@chakra-ui/react"
+import { useToast, Container, Heading, Box, Alert, AlertIcon, Code, Button, Text, Link } from "@chakra-ui/react"
 import {
   useGetWalletAddressQuery,
   useRequestWalletMutation,
@@ -61,7 +61,7 @@ const Home: NextPage = () => {
     }
   }, [mintNftMutation.error, toast])
 
-  /** Registers event listener for `accountsChanged` (when user changes account in MetMask, or disconnects account) */
+  /** Registers event listener for `accountsChanged` (when user changes account in MetaMask, or disconnects account) */
   useEffect(() => {
     function handleAccountsChanged(accounts: string[]) {
       console.log(
@@ -101,7 +101,15 @@ const Home: NextPage = () => {
 
         <Box pt={6}>
           <Heading size="md" as="h2" pb={2}>
-            {"Make sure you're on the Ropsten test network!"}
+            {"Make sure you're on the Ropsten test network! See "}
+            <Link
+              href="https://www.openattestation.com/docs/appendix/ropsten-setup/"
+              isExternal
+              textDecoration="underline"
+            >
+              https://www.openattestation.com/docs/appendix/ropsten-setup/
+            </Link>{" "}
+            for instructions
           </Heading>
           {getWalletAddressQuery.data ? (
             <Alert status="success">
